@@ -117,5 +117,3 @@ resetBtn.addEventListener('click', resetTimer);
 pauseBtn.addEventListener('click', pausedOrResume);
 
 updateDisplay()
-
-console.log(startTimer())
