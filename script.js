@@ -20,6 +20,28 @@ function updateDisplay(){
   displayBtn.textContent = `${hour}:${minite}:${second}`
 }
 
+let wakeLock = null;
+
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Wake Lock is active');
+    }
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+}
+
+function releaseWakeLock() {
+  if (wakeLock) {
+    wakeLock.release();
+    wakeLock = null;
+    console.log('Wake Lock released');
+  }
+}
+
+
 
 function startTimer(){
   
@@ -50,6 +72,8 @@ function startTimer(){
 
 
   timer = setInterval(()=>{
+    requestWakeLock();
+
     if(time> 0 ){
       time--;
       updateDisplay()
@@ -57,6 +81,8 @@ function startTimer(){
       clearInterval(timer);
       timer = null;
       pauseBtn.textContent = "Pause";
+      requestWakeLock();
+
     }
   }, 1000)
 }
@@ -77,6 +103,8 @@ function pausedOrResume(){
 
 function resetTimer(){
   clearInterval(timer);
+  requestWakeLock();
+
   timer = null
   time = 0
   isPause = false;
