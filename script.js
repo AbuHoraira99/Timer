@@ -24,9 +24,9 @@
 
 async function requestWakeLock() {
   try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
-      console.log('Wake Lock is active');
+    if ("wakeLock" in navigator) {
+      wakeLock = await navigator.wakeLock.request("screen");
+      console.log("Wake Lock is active");
     }
   } catch (err) {
     console.error(`${err.name}, ${err.message}`);
@@ -37,14 +37,11 @@ function releaseWakeLock() {
   if (wakeLock) {
     wakeLock.release();
     wakeLock = null;
-    console.log('Wake Lock released');
+    console.log("Wake Lock released");
   }
 }
 
-
-
 // function startTimer(){
-  
 
 //   // if(timeInput.value){
 //   //   time = parseInt(timeInput.value, 10)
@@ -67,9 +64,7 @@ function releaseWakeLock() {
 //   minInput.value = '';
 //   secInput.value = '';
 
-
 //   if(time <= 0) return;
-
 
 //   timer = setInterval(()=>{
 //     requestWakeLock();
@@ -100,7 +95,6 @@ function releaseWakeLock() {
 //   }
 // }
 
-
 // function resetTimer(){
 //   clearInterval(timer);
 //   requestWakeLock();
@@ -118,32 +112,30 @@ function releaseWakeLock() {
 
 // updateDisplay()
 
-
 // update this to this
 
-console.log('code is running');
+
 
 let time = 0;
 let timer;
 
+const displayTimer = document.querySelector(".timer");
+const startBtn = document.querySelector(".startBtn");
+const resetBtn = document.querySelector(".resetBtn");
 
-const displayTimer = document.querySelector('.timer');
-const startBtn = document.querySelector('.startBtn');
-const resetBtn = document.querySelector('.resetBtn');
+const minInput = document.querySelector("#minInput");
+const secInput = document.querySelector("#secInput");
 
-const minInput = document.querySelector('#minInput');
-const secInput = document.querySelector('#secInput');
-
-
-function updatedisplay(){
-  let minute = Math.floor(time / 60).toString().padStart(2, '0')
-  let second = (time % 60).toString().padStart(2, '0')
-  displayTimer.textContent = `${minute}:${second}`
+function updatedisplay() {
+  let minute = Math.floor(time / 60)
+    .toString()
+    .padStart(2, "0");
+  let second = (time % 60).toString().padStart(2, "0");
+  displayTimer.textContent = `${minute}:${second}`;
 }
 
-
-function startTimer(){
-  if(timer) return;
+function startTimer() {
+  if (timer) return;
 
   const minute = parseInt(minInput.value, 10) || 0;
   const second = parseInt(secInput.value, 10) || 0;
@@ -152,36 +144,35 @@ function startTimer(){
 
   minInput.value = "";
   secInput.value = "";
-  
 
-  if(time <= 0) return;
+  if (time <= 0) return;
 
-  updatedisplay() 
+  updatedisplay();
 
-  timer = setInterval(()=>{
-    requestWakeLock();
-    if(time > 0){
-      time--;
-      updatedisplay()
-    }else{
-      clearInterval(timer);
-      requestWakeLock();
-    }
-  },1000)
-
-}
-
-function resetTimer(){
-  clearInterval(timer);
   requestWakeLock();
-  time = 0
-  timer = null;
-  updatedisplay()
+
+  timer = setInterval(() => {
+    if (time > 0) {
+      time--;
+      updatedisplay();
+    } else {
+      clearInterval(timer);
+      timer = null;
+
+      releaseWakeLock();
+    }
+  }, 1000);
 }
 
+function resetTimer() {
+  clearInterval(timer);
+  releaseWakeLock();
+  time = 0;
+  timer = null;
+  updatedisplay();
+}
 
+startBtn.addEventListener("click", startTimer);
+resetBtn.addEventListener("click", resetTimer);
 
-startBtn.addEventListener('click', startTimer);
-resetBtn.addEventListener('click', resetTimer);
-
-updatedisplay()
+updatedisplay();
