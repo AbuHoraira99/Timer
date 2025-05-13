@@ -22,24 +22,24 @@
 
 // let wakeLock = null;
 
-// async function requestWakeLock() {
-//   try {
-//     if ('wakeLock' in navigator) {
-//       wakeLock = await navigator.wakeLock.request('screen');
-//       console.log('Wake Lock is active');
-//     }
-//   } catch (err) {
-//     console.error(`${err.name}, ${err.message}`);
-//   }
-// }
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Wake Lock is active');
+    }
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+}
 
-// function releaseWakeLock() {
-//   if (wakeLock) {
-//     wakeLock.release();
-//     wakeLock = null;
-//     console.log('Wake Lock released');
-//   }
-// }
+function releaseWakeLock() {
+  if (wakeLock) {
+    wakeLock.release();
+    wakeLock = null;
+    console.log('Wake Lock released');
+  }
+}
 
 
 
@@ -159,11 +159,13 @@ function startTimer(){
   updatedisplay() 
 
   timer = setInterval(()=>{
+    requestWakeLock();
     if(time > 0){
       time--;
       updatedisplay()
     }else{
       clearInterval(timer);
+      requestWakeLock();
     }
   },1000)
 
@@ -171,6 +173,7 @@ function startTimer(){
 
 function resetTimer(){
   clearInterval(timer);
+  requestWakeLock();
   time = 0
   timer = null;
   updatedisplay()
